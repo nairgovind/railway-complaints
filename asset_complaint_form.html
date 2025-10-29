@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Railway Asset Complaint</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 30px;
+            margin-top: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .asset-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+
+        .asset-info h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+            padding-bottom: 10px;
+        }
+
+        .info-row {
+            display: flex;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .info-label {
+            font-weight: 600;
+            min-width: 120px;
+            opacity: 0.9;
+        }
+
+        .info-value {
+            flex: 1;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="tel"],
+        input[type="email"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .required {
+            color: #e74c3c;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            text-align: center;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚂 Railway Asset Complaint</h1>
+            <p>Report an issue with railway assets</p>
+        </div>
+
+        <div id="errorMessage" class="error-message"></div>
+
+        <div class="asset-info" id="assetInfo" style="display: none;">
+            <h2>Asset Details</h2>
+            <div class="info-row">
+                <span class="info-label">Asset Code:</span>
+                <span class="info-value" id="assetCode">-</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Station:</span>
+                <span class="info-value" id="stationName">-</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Station Code:</span>
+                <span class="info-value" id="stationCode">-</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Location:</span>
+                <span class="info-value" id="location">-</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Type:</span>
+                <span class="info-value" id="assetType">-</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Licensee:</span>
+                <span class="info-value" id="licenseeName">-</span>
+            </div>
+        </div>
+
+        <form id="complaintForm">
+            <div class="form-group">
+                <label for="name">Your Name <span class="required">*</span></label>
+                <input type="text" id="name" name="name" required placeholder="Enter your full name">
+            </div>
+
+            <div class="form-group">
+                <label for="mobile">Mobile Number <span class="required">*</span></label>
+                <input type="tel" id="mobile" name="mobile" required 
+                       pattern="[0-9]{10}" 
+                       placeholder="10-digit mobile number">
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email (Optional)</label>
+                <input type="email" id="email" name="email" placeholder="your.email@example.com">
+            </div>
+
+            <div class="form-group">
+                <label for="complaintType">Complaint Type <span class="required">*</span></label>
+                <select id="complaintType" name="complaintType" required>
+                    <option value="">Select complaint type</option>
+                    <option value="Cleanliness">Cleanliness Issue</option>
+                    <option value="Maintenance">Maintenance Required</option>
+                    <option value="Functionality">Not Working/Functional Issue</option>
+                    <option value="Staff Behavior">Staff Behavior</option>
+                    <option value="Overcharging">Overcharging</option>
+                    <option value="Safety">Safety Concern</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="complaint">Complaint Details <span class="required">*</span></label>
+                <textarea id="complaint" name="complaint" required 
+                          placeholder="Please describe your complaint in detail..."></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn">Submit Complaint via WhatsApp</button>
+        </form>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p style="margin-top: 10px; color: #667eea;">Preparing your complaint...</p>
+        </div>
+    </div>
+
+    <script>
+        // Asset database - will be populated from assets_data.json
+        const assetDatabase = {};
+
+        // Load assets data
+        async function loadAssetsData() {
+            try {
+                const response = await fetch('assets_data.json');
+                const data = await response.json();
+                Object.assign(assetDatabase, data);
+            } catch (error) {
+                console.error('Error loading assets data:', error);
+            }
+        }
+
+        // Get asset code from URL parameter
+        function getAssetCodeFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('assetcode');
+        }
+
+        // Display asset information
+        function displayAssetInfo(assetCode) {
+            const asset = assetDatabase[assetCode];
+
+            if (!asset) {
+                document.getElementById('errorMessage').textContent = 
+                    'Asset not found. Please scan a valid QR code.';
+                document.getElementById('errorMessage').style.display = 'block';
+                return;
+            }
+
+            document.getElementById('assetCode').textContent = asset.assetCode || '-';
+            document.getElementById('stationName').textContent = asset.stationName || '-';
+            document.getElementById('stationCode').textContent = asset.stationCode || '-';
+            document.getElementById('location').textContent = asset.location || '-';
+            document.getElementById('assetType').textContent = asset.type || '-';
+            document.getElementById('licenseeName').textContent = asset.licenseeName || '-';
+            document.getElementById('assetInfo').style.display = 'block';
+        }
+
+        // Handle form submission
+        document.getElementById('complaintForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const assetCode = getAssetCodeFromURL();
+            const asset = assetDatabase[assetCode];
+
+            if (!asset) {
+                alert('Asset information not found. Please scan a valid QR code.');
+                return;
+            }
+
+            // Get form data
+            const name = document.getElementById('name').value;
+            const mobile = document.getElementById('mobile').value;
+            const email = document.getElementById('email').value;
+            const complaintType = document.getElementById('complaintType').value;
+            const complaint = document.getElementById('complaint').value;
+
+            // Validate mobile number
+            if (!/^[0-9]{10}$/.test(mobile)) {
+                alert('Please enter a valid 10-digit mobile number');
+                return;
+            }
+
+            // Show loading
+            document.getElementById('loading').style.display = 'block';
+            document.querySelector('.submit-btn').style.display = 'none';
+
+            // Create WhatsApp message
+            const message = `*RAILWAY ASSET COMPLAINT*
+
+*Asset Details:*
+Asset Code: ${asset.assetCode}
+Station: ${asset.stationName}
+Station Code: ${asset.stationCode}
+Location: ${asset.location}
+Type: ${asset.type}
+Category: ${asset.category}
+Licensee: ${asset.licenseeName}
+
+*Complainant Details:*
+Name: ${name}
+Mobile: ${mobile}
+${email ? 'Email: ' + email : ''}
+
+*Complaint Type:* ${complaintType}
+
+*Complaint Details:*
+${complaint}
+
+_Submitted on: ${new Date().toLocaleString()}_`;
+
+            // WhatsApp number (replace with your actual WhatsApp number)
+            const whatsappNumber = '919895130935'; // Replace with actual number
+
+            // Encode message for URL
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+
+            // Redirect to WhatsApp
+            setTimeout(() => {
+                window.location.href = whatsappURL;
+            }, 1000);
+        });
+
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', async function() {
+            await loadAssetsData();
+            const assetCode = getAssetCodeFromURL();
+
+            if (!assetCode) {
+                document.getElementById('errorMessage').textContent = 
+                    'No asset code provided. Please scan a QR code to continue.';
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('complaintForm').style.display = 'none';
+            } else {
+                displayAssetInfo(assetCode);
+            }
+        });
+    </script>
+</body>
+</html>
