@@ -184,7 +184,7 @@
         <div class="asset-info" id="assetInfo" style="display: none;">
             <h2>Asset Details</h2>
             <div class="info-row">
-                <span class="info-label">Asset Code:</span>
+                <span class="info-label">Identification Number/Code:</span>
                 <span class="info-value" id="assetCode">-</span>
             </div>
             <div class="info-row">
@@ -218,7 +218,8 @@
             <div class="form-group">
                 <label for="mobile">Mobile Number <span class="required">*</span></label>
                 <input type="tel" id="mobile" name="mobile" required 
-                       pattern="[0-9]{10}" 
+                       pattern="[0-9]{10}"
+                       maxlength="10" 
                        placeholder="10-digit mobile number">
             </div>
 
